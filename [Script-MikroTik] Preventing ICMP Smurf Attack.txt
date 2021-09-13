@@ -1,0 +1,3 @@
+/ip firewall filter
+add action=drop chain=input comment="Preventing ICMP Smurf Attack" dst-address-type=broadcast protocol=icmp
+add action=drop chain=input in-interface=pppoe-out1 protocol=icmp
