@@ -1,3 +1,4 @@
+/ip firewall raw
+add action=drop chain=prerouting comment="Preventing ICMP Smurf Attack" dst-address-type=broadcast protocol=icmp
 /ip firewall filter
-add action=drop chain=input comment="Preventing ICMP Smurf Attack" dst-address-type=broadcast protocol=icmp
-add action=drop chain=input in-interface=pppoe-out1 protocol=icmp
+add action=drop chain=input comment="Block Ping (ICMP) From WAN" in-interface=pppoe-out1 protocol=icmp
