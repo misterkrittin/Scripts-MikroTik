@@ -1,0 +1,54 @@
+- Disable services on RouterOS
+  /ip service disable telnet,ftp,www,www-ssl,api,api-ssl
+  /ip service print 
+
+- Changing the Default SSH Port
+  /ip service set ssh port=2200
+  /ip service print
+
+- Restrict access by IP Address
+  /ip service set winbox address=192.168.50.0/24
+  /ip service set ssh address=192.168.50.0/24
+
+- RouterOS MAC-access
+  MAC-Telnet
+  Disable mac-telnet services,
+   /tool mac-server set allowed-interface-list=none
+   /tool mac-server print
+
+  MAC-Winbox
+  Disable mac-winbox services,
+   /tool mac-server mac-winbox set allowed-interface-list=none
+   /tool mac-server mac-winbox print
+
+  MAC-Ping
+  Disable mac-ping service,
+   /tool mac-server ping set enabled=no
+   /tool mac-server ping print
+
+- Bandwidth Test
+  /tool bandwidth-server set enabled=no
+
+- DNS cache
+  /ip dns set allow-remote-requests=no
+
+- Other clients services
+  Disable MikroTik caching proxy,
+   /ip proxy set enabled=no
+
+  Disable MikroTik socks proxy,
+   /ip socks set enabled=no
+
+  Disable MikroTik UPNP service,
+   /ip upnp set enabled=no
+
+  Disable MikroTik dynamic name service or ip cloud,
+   /ip cloud set ddns-enabled=no update-time=no
+
+- More Secure SSH access
+  /ip ssh set strong-crypto=yes
+  /ip ssh print
+  /ip ssh regenerate-host-key
+	This will regenerate current SSH host keys, yes? [y/N]: y
+  /system reboot
+	Reboot, yes? [y/N]: y
