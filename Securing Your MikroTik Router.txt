@@ -1,3 +1,16 @@
+- Access to a router
+  Change default username admin to different name, custom name helps to protect access to your rotuer, if anybody got direct access to your router.
+   /user add name=**myname** password=**mypassword** group=full
+   /user remove admin
+   
+  Change password
+   /password
+
+- Access by IP address
+  Besides the fact that default firewall protects your router from unauthorized access from outer networks, it is possible to restrict username access for the specific IP address
+   /user set 0 allowed-address=x.x.x.x/yy
+    x.x.x.x/yy - your IP or network subnet that is allowed to access your router.
+
 - Disable services on RouterOS
   /ip service disable telnet,ftp,www,www-ssl,api,api-ssl
   /ip service print 
