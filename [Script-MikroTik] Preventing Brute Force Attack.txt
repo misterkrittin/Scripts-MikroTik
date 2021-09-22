@@ -1,0 +1,8 @@
+/ip firewall filter
+add action=drop chain=input comment="Drop anyone in Black List (SSH)" src-address-list="Black List (SSH)"
+add action=jump chain=input comment="Jump to Black List (SSH) Chain" dst-port=22 jump-target="Black List (SSH) Chain" protocol=tcp
+add action=add-src-to-address-list address-list="Black List (SSH)" address-list-timeout=4w2d chain="Black List (SSH) Chain" comment="Transfer repeated attempts from Black List (SSH) Stage 3 to Black List (SSH)" connection-state=new src-address-list="Black List (SSH) Stage 3"
+add action=add-src-to-address-list address-list="Black List (SSH) Stage 3" address-list-timeout=1m chain="Black List (SSH) Chain" comment="Add Successive attempts to Black List (SSH) Stage 3" connection-state=new src-address-list="Black List (SSH) Stage 2"
+add action=add-src-to-address-list address-list="Black List (SSH) Stage 2" address-list-timeout=1m chain="Black List (SSH) Chain" comment="Add Successive attempts to Black List (SSH) Stage 2" connection-state=new src-address-list="Black List (SSH) Stage 1"
+add action=add-src-to-address-list address-list="Black List (SSH) Stage 1" address-list-timeout=1m chain="Black List (SSH) Chain" comment="Add initial attempt to Black List (SSH) Stage 1" connection-state=new
+add action=return chain="Black List (SSH) Chain" comment="Return from Black List (SSH) chain"
