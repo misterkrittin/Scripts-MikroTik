@@ -1,0 +1,4 @@
+/ip firewall raw
+add action=drop chain=prerouting comment="Preventing UDP Flood Attack" dst-port=53 in-interface=pppoe-out1 protocol=udp
+add action=accept chain=prerouting dst-port=53 in-interface=!pppoe-out1 limit=100,5:packet protocol=udp
+add action=drop chain=prerouting dst-port=53 in-interface=!pppoe-out1 protocol=udp
