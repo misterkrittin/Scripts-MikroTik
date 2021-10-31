@@ -1,6 +1,7 @@
 # ❗ Donation
 If this project help you reduce time to develop, you can give me a cup of coffee :)
 <p align="center">
+  <h2>Donate via Paypal</h2>
   <a href="https://www.paypal.com/paypalme/misterkrittin"><img width="256" height="256" src="https://www.julianmills.co.uk/wp-content/uploads/2021/02/icon-256x256-1.png"></a>
 </p>
 <p align="center">
