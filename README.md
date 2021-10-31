@@ -1,5 +1,8 @@
 # 🧑‍Introduce myself
-Hello everyone. My name is Krittin Srithong with a short experience in the IT sector. I studied Bachelor in Computer Enginnering. You can visit my <a href="https://medium.com/techblogclub">Web blogs</a> as well as my <a href="https://github.com/misterkrittin/Scripts-MikroTik">GitHub</a>.
+Hello everyone. My name is Krittin Srithong with a short experience in the IT sector. I studied Bachelor in Computer Enginnering from Thailand. You can visit my <a href="https://medium.com/techblogclub">Web blogs</a> as well as my <a href="https://github.com/misterkrittin/Scripts-MikroTik">GitHub</a>.
+
+# 📞Contact me
+✉ swd.xpong@gmail.com
 
 # 💰 Donation
 If this project help you reduce time to develop, you can give me a cup of coffee :)
