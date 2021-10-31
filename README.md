@@ -1,4 +1,5 @@
 # 🧑‍Introduce myself
+Hello everyone. My name is Krittin Srithong with a short experience in the IT sector. I studied Bachelor in Computer Enginnering. You can visit my <link src="https://medium.com/techblogclub">web blogs</link> as well as my GitHub.
 
 # 💰 Donation
 If this project help you reduce time to develop, you can give me a cup of coffee :)
