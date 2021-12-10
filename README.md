@@ -12,5 +12,5 @@ If this project help you reduce time to develop, you can give me a cup of coffee
 </p>
 <p align="center">
   <h2>Donate via QR Code PromptPay (พร้อมเพย์)</h2>
-  <img src="https://scontent.fhdy4-1.fna.fbcdn.net/v/t1.15752-9/249843673_3189879934576094_7471854236781608877_n.png?_nc_cat=107&ccb=1-5&_nc_sid=ae9488&_nc_ohc=8hP6XYr0-s4AX-tZIwR&_nc_ht=scontent.fhdy4-1.fna&oh=e4a2097be47d804e597d1ef7666f69bb&oe=61A2FF3A">
+  <img src="https://promptpay.io/0836598795.png">
 </p>
