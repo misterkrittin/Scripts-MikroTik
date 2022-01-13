@@ -1,0 +1,5 @@
+/ip firewall filter
+add action=drop chain=forward dst-address-list=Netflix src-address=192.168.50.0/24 comment="Blocking Netflix traffic using RouterOS"
+
+/ip firewall mangle
+add action=add-dst-to-address-list address-list=Netflix address-list-timeout=4w2d chain=prerouting content=nflxvideo.net src-address=192.168.50.0/24 comment="Detecting IP Addresses Netflix App"
