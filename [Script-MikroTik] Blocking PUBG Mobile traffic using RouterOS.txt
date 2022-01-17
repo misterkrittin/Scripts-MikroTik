@@ -1,0 +1,6 @@
+/ip firewall filter
+add action=drop chain=forward dst-address-list=PUBGM src-address=192.168.50.0/24 comment="Blocking PUBG Mobile traffic using RouterOS"
+
+/ip firewall mangle
+add action=add-dst-to-address-list address-list=PUBGM address-list-timeout=4d chain=prerouting dst-port=10012,17500 protocol=tcp comment="Detecting IP Addresses PUBG Mobile"
+add action=add-dst-to-address-list address-list=PUBGM address-list-timeout=4d chain=prerouting dst-port=10000-30000 protocol=udp
