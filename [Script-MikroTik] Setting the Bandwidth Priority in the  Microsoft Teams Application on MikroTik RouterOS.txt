@@ -1,7 +1,7 @@
 /ip firewall mangle
 add action=mark-connection chain=prerouting comment="Mark MicrosoftTeams Application Connection" dst-address-list=MicrosoftTeams dst-port=3478,3479,3480,3481 new-connection-mark=MicrosoftTeams-Connection passthrough=yes protocol=tcp
 add action=mark-connection chain=prerouting dst-address-list=MicrosoftTeams dst-port=3478,3479,3480,3481 new-connection-mark=MicrosoftTeams-Connection passthrough=yes protocol=udp
-add action=mark-connection chain=prerouting dst-address-list=MicrosoftTeams dst-port=80,443 new-connection-mark=MicrosoftTeams-Connection passthrough=yes protocol=tcp
+add action=mark-connection chain=prerouting comment="Mark MicrosoftTeams Web App Connections" dst-address-list=MicrosoftTeams dst-port=80,443 new-connection-mark=MicrosoftTeams-Connection passthrough=yes protocol=tcp
 add action=mark-packet chain=prerouting comment="Mark All MicrosoftTeams Packets" connection-mark=MicrosoftTeams-Connection new-packet-mark=MicrosoftTeams-Packet passthrough=no
 
 /queue simple
