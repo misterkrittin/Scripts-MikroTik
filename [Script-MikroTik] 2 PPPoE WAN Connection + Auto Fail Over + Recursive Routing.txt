@@ -16,14 +16,14 @@
   "dstAddress"=1.1.1.1/32;
   "gateway"=1.1.1.1;
   "distance"=1;
-  "wan"="pppoe-out1" # Edit name WAN Interface-ISP1
+  "wan"="pppoe-out1"
  };
  {
   "remoteAddress"=$"remote-address";
   "dstAddress"=8.8.8.8/32;
   "gateway"=8.8.8.8;
   "distance"=2;
-  "wan"="pppoe-out2" # Edit name WAN Interface-ISP2
+  "wan"="pppoe-out2"
  };
 }
 
