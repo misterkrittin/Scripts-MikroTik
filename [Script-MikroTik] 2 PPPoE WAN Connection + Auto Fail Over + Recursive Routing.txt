@@ -1,0 +1,51 @@
+####################################################################################
+## 2 PPPoE WAN Connection (Dynamic IP from ISP) + Auto Fail Over + Recursive Routing      													   
+####################################################################################
+
+### PPP > Profiles > Name Profile1 (New Profile) > Scripts > On Up: ###
+
+:local createRoute do={
+ /log info message="Add route $remoteAddress"
+ /ip route add dst-address=$dstAddress gateway=$remoteAddress scope=10 target-scope=10 comment=("D".$wan)
+ /ip route add dst-address=0.0.0.0/0 gateway=$gateway scope=30 target-scope=10 distance=$distance check-gateway=ping comment=("D".$wan)
+}
+
+:local wanArr {
+ {
+  "remoteAddress"=$"remote-address";
+  "dstAddress"=1.1.1.1/32;
+  "gateway"=1.1.1.1;
+  "distance"=1;
+  "wan"="pppoe-out1" # Edit name WAN Interface-ISP1
+ };
+ {
+  "remoteAddress"=$"remote-address";
+  "dstAddress"=8.8.8.8/32;
+  "gateway"=8.8.8.8;
+  "distance"=2;
+  "wan"="pppoe-out2" # Edit name WAN Interface-ISP2
+ };
+}
+
+:local intf1 [/interface get $interface];
+:foreach w in=$wanArr do={
+ if (($w->"wan") = ($intf1->"name")) do={
+  $createRoute remoteAddress=($w->"remoteAddress") dstAddress=($w->"dstAddress") gateway=($w->"gateway") distance=($w->"distance") wan=($w->"wan")
+ }
+}
+
+##########[Completed PPP UP]##########
+
+
+### PPP > Profiles > Name Profile1 (New Profile) > Scripts > On Down: ###
+
+:local removeRoute do={ 
+ /ip route remove [find comment=$wan]
+}
+
+:local gw [/ip route print as-value where gateway=$"remote-address"];
+:if (($gw->0->"comment") != "") do={
+ $removeRoute wan=($gw->0->"comment")
+}
+
+##########[Completed PPP DOWN]##########
