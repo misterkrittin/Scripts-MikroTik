@@ -6,8 +6,8 @@
 
 :local createRoute do={
  /log info message="Add route $remoteAddress"
- /ip route add dst-address=$dstAddress gateway=$remoteAddress scope=10 target-scope=10 comment=("D".$wan)
- /ip route add dst-address=0.0.0.0/0 gateway=$gateway scope=30 target-scope=10 distance=$distance check-gateway=ping comment=("D".$wan)
+ /ip route add dst-address=$dstAddress gateway=$remoteAddress scope=30 target-scope=10 comment=("D".$wan)
+ /ip route add dst-address=0.0.0.0/0 gateway=$gateway scope=30 target-scope=30 distance=$distance check-gateway=ping comment=("D".$wan)
 }
 
 :local wanArr {
