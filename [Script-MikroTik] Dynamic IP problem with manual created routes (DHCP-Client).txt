@@ -1,0 +1,9 @@
+IP > DHCP Client > Select Interface > Advance Tabs > Script:
+
+################################################################################################
+:if ($bound=1) do={
+	/ip route add distance=1 gateway=$"gateway-address" routing-mark=via-ISP2 comment="ISP2"
+} else={
+	/ip route remove [/ip route find comment="ISP2"]
+}
+################################################################################################
