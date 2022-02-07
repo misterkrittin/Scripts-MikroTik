@@ -1,0 +1,22 @@
+####################################################################################
+## 1 DHCP Client WAN Connection (Dynamic IP from ISP) + Auto Fail Over + Recursive Routing      													   
+####################################################################################
+
+###################################################################################
+## [Edit script]
+## /ip route add distance=1 gateway=$"gateway-address" dst-address="8.8.8.8" scope=30  target-scope=10  comment="ISP2" <<<-- Edit only your dst-address (DNS Server for Check Recursive) and do not edit comment!!!
+## /ip route add distance=2 gateway="8.8.8.8" check-gateway=ping scope=30  target-scope=30 comment="ISP2" <<<-- Edit only your distance (For do FailOver), gateway(DNS Server for Check Recursive) and do not edit comment!!!
+###################################################################################
+
+####################################################################################
+## [How To Set-up]
+## IP > DHCP Client > Select WAN Interface > Add Default Route: no
+## IP > DHCP Client > Select WAN Interface > Advance Tabs > Script: Paste Script
+####################################################################################
+
+:if ($bound=1) do={
+	/ip route add distance=1 gateway=$"gateway-address" dst-address="8.8.8.8" scope=30  target-scope=10  comment="ISP2"
+        /ip route add distance=2 gateway="8.8.8.8" check-gateway=ping scope=30  target-scope=30 comment="ISP2"
+} else={
+	/ip route remove [/ip route find comment="ISP2"]
+}
