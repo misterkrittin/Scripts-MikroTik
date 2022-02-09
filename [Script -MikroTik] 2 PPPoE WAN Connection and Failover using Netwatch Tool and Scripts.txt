@@ -1,0 +1,62 @@
+#################################
+# 2 PPPoE WAN Connection and Failover using Netwatch Tool and Scripts
+#################################
+
+### ISP1 - PPPoE WAN Connection (pppoe-out1) ###
+PPP > Go to pppoe-out1 interface and uncheck Add Default Route.
+
+/ip route
+add comment="To ISP1" distance=1 gateway=pppoe-out1
+add comment="Netwatch ISP1 (Google DNS)" distance=1 dst-address=8.8.8.8/32 gateway=pppoe-out1
+
+Go to Tools > Netwatch
+1.1 Press +
+1.2 In (Host) tab
+    -> Host: 8.8.8.8
+    -> Interval: 00:00:10
+    -> Timeout: 800
+1.3 In (Up) tab
+    -> On up:
+
+ip route enable [find dst-address=0.0.0.0/0 gateway=pppoe-out1]
+:log warning "ISP1 is up"
+
+1.4 In (Down) tab
+    -> On down:
+
+ip route disable [find dst-address=0.0.0.0/0 gateway=pppoe-out1]
+:log error "ISP1 is down"
+/ip firewall connection remove [find]
+
+1.5 Press Apply and OK.
+###################################
+
+
+### ISP2 - PPPoE WAN Connection (pppoe-out2) ###
+PPP > Go to pppoe-out2 interface and uncheck Add Default Route.
+
+/ip route
+add comment="To ISP2" distance=2 gateway=pppoe-out2
+add comment="Netwatch ISP2 (Quad9 DNS)" distance=1 dst-address=9.9.9.9/32 gateway=pppoe-out2
+
+Go to Tools > Netwatch
+1.1 Press +
+1.2 In (Host) tab
+    -> Host: 9.9.9.9
+    -> Interval: 00:00:10
+    -> Timeout: 800
+1.3 In (Up) tab
+    -> On up:
+
+ip route enable [find dst-address=0.0.0.0/0 gateway=pppoe-out2]
+:log warning "ISP2 is up"
+
+1.4 In (Down) tab
+    -> On down:
+
+ip route disable [find dst-address=0.0.0.0/0 gateway=pppoe-out2]
+:log error "ISP2 is down"
+/ip firewall connection remove [find]
+
+1.5 Press Apply and OK.
+###################################
