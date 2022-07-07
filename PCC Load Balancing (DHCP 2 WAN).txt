@@ -1,0 +1,135 @@
+###########################################################################
+# PCC Load Balancing (DHCP 2 WAN)
+# This script is suitable for the same internet speed of both ISPs such as 
+# ISP1 -> Download Speed: 300 Mbps, Upload Speed: 200 Mbps
+# ISP2 -> Download Speed: 300 Mbps, Upload Speed: 200 Mbps
+###########################################################################
+
+# Model: hAP ac², RouterOS 7.3.1 (Stable)
+
+# Ether1 -> Connect To ISP1 using DHCP-Client medthod (ISP GW: 192.168.12.1)
+# Ether2 -> Connect To ISP2 using DHCP-Client medthod (ISP GW: 192.168.21.1)
+# Ether3 - Ether5 -> Give IP Address to PC-Client 172.16.0.0/24
+
+# 1. Create Bridge and assign ports to the bridge
+/interface bridge
+add name=Bridge-ALL-PORTs
+
+/interface bridge port
+add bridge=Bridge-ALL-PORTs interface=ether4
+add bridge=Bridge-ALL-PORTs interface=ether3
+add bridge=Bridge-ALL-PORTs interface=ether5
+#############################################
+
+# 2. Assign IP Gateway to Interface
+# IP > Addresses > Press "+"
+# Address: 172.16.0.1/24
+# network: 172.16.0.0
+# Interface: Bridge-ALL-PORTs
+#############################################
+
+# 3. Assign DNS Server to MikroTik Router
+# IP > DNS
+# 1.1.1.1, 1.0.0.1
+# Make sure to uncheck "Allow remote request"
+# Press "Apply" and "OK"
+#############################################
+
+# 4. Connected To ISP
+# IP > DHCP-Client
+# For Connect To ISP1,
+#  Press "+"
+#  Interface: ether1
+#  Uncheck "Use peer DNS"
+#  Uncheck "Use peer NTP"
+#  Add Default Route: yes (Dynamic Distance = 1)
+#
+# For Connect to ISP2,
+#  Press "+"
+#  Interface: ether2
+#  Uncheck "Use peer DNS"
+#  Uncheck "Use peer NTP"
+#  Add Default Route: yes (Dynamic Distance = 1)
+#############################################
+
+# 5. Create DHCP Server to Bridge
+# IP > DHCP Server > Press "DHCP Setup"
+# DHCP Server Interface: Bridge-ALL-PORTs 
+# And press the next button until finished
+#############################################
+
+# 6. Make NAT
+# IP > Firewall > NAT
+# For make NAT ISP1,
+#  Press "+"
+#  Chain: srcnat
+#  Src. Address: 172.16.0.0/24
+#  Out. Interface: ether1
+#  Action: masquerade
+#
+# For make NAT ISP2,
+#  Press "+"
+#  Chain: srcnat
+#  Src. Address: 172.16.0.0/24
+#  Out. Interface: ether2
+#  Action: masquerade
+#############################################
+
+# 7. Create Tables Routing
+# Routing > Tables
+# For table routing ISP1
+#  Press "+"
+#  Name: via-ISP1
+#  Make sure to check "FIB"
+#  Press "OK"
+#
+# For table routing ISP2
+#  Press "+"
+#  Name: via-ISP2
+#  Make sure to check "FIB"
+#  Press "OK"
+#############################################
+
+# 8. Script PCC Load Balancing
+
+/ip firewall mangle
+add action=accept chain=prerouting dst-address=192.168.12.0/24
+add action=accept chain=prerouting dst-address=192.168.21.0/24
+add action=accept chain=prerouting dst-address=172.16.0.0/24
+add action=mark-connection chain=prerouting in-interface=Bridge-ALL-PORTs new-connection-mark=ISP1-Conn passthrough=yes per-connection-classifier=both-addresses:2/0
+add action=mark-connection chain=prerouting in-interface=Bridge-ALL-PORTs new-connection-mark=ISP2-Conn passthrough=yes per-connection-classifier=both-addresses:2/1
+add action=mark-routing chain=prerouting connection-mark=ISP1-Conn in-interface=Bridge-ALL-PORTs new-routing-mark=via-ISP1 passthrough=no
+add action=mark-routing chain=prerouting connection-mark=ISP2-Conn in-interface=Bridge-ALL-PORTs new-routing-mark=via-ISP2 passthrough=no
+add action=mark-connection chain=prerouting in-interface=ether1 new-connection-mark=ISP1-Conn passthrough=yes
+add action=mark-connection chain=prerouting in-interface=ether2 new-connection-mark=ISP2-Conn passthrough=yes
+add action=mark-routing chain=output connection-mark=ISP1-Conn new-routing-mark=via-ISP1 passthrough=no
+add action=mark-routing chain=output connection-mark=ISP2-Conn new-routing-mark=via-ISP2 passthrough=no
+
+#############################################
+
+# 9. Create 2 routes to ISP1 and ISP2 with the mark routing that you have just created
+
+/ip route
+add disabled=no distance=1 dst-address=0.0.0.0/0 gateway=192.168.12.1 pref-src="" routing-table=via-ISP1 scope=30 suppress-hw-offload=no target-scope=10
+add disabled=no distance=1 dst-address=0.0.0.0/0 gateway=192.168.21.1 pref-src="" routing-table=via-ISP2 scope=30 suppress-hw-offload=no target-scope=10
+
+#############################################
+
+# 10. For failover, create a route to ISP1 with the mark via-ISP2 and give it a distance of 2
+
+/ip route
+add disabled=no distance=2 dst-address=0.0.0.0/0 gateway=192.168.12.1 pref-src="" routing-table=via-ISP2 scope=30 suppress-hw-offload=no target-scope=10
+
+#############################################
+
+# 11. For failover, create a route to ISP2 with the mark via-ISP1 and give it a distance of 2
+
+/ip route
+add disabled=no distance=2 dst-address=0.0.0.0/0 gateway=192.168.21.1 pref-src="" routing-table=via-ISP1 scope=30 suppress-hw-offload=no target-scope=10
+
+#############################################
+
+# 12. Set NTP-Client to MikroTik Router
+# System > NTP Client > check Enabled
+# NTP Servers: Input IP Address of NTP Server (Up to you choose)
+#############################################
