@@ -42,14 +42,14 @@ add bridge=Bridge-ALL-PORTs interface=ether5
 #  Interface: ether1
 #  Uncheck "Use peer DNS"
 #  Uncheck "Use peer NTP"
-#  Add Default Route: yes (Dynamic Distance = 1)
+#  Add Default Route: no
 #
 # For Connect to ISP2,
 #  Press "+"
 #  Interface: ether2
 #  Uncheck "Use peer DNS"
 #  Uncheck "Use peer NTP"
-#  Add Default Route: yes (Dynamic Distance = 1)
+#  Add Default Route: no
 #############################################
 
 # 5. Create DHCP Server to Bridge
