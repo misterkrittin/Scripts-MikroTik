@@ -1,0 +1,39 @@
+PCC Load Balancing (2 WAN PPPoE)
+ISP1 - Download Speed: 1000 Mbps, Upload Speed: 500 Mbps
+ISP2 - Download Speed: 1000 Mbps, Upload Speed: 500 Mbps
+
+VLAN10 (10.10.10.0/24) 
+VLAN20 (10.20.20.0/24) 
+
+# 1. ALL LAN Address Lists
+/ip firewall address-list
+add address=10.10.10.0/24 list=LAN
+add address=10.20.20.0/24 list=LAN
+
+# 2. Create Route tables
+  2.1. Routing > Tables
+    For via-ISP1,
+     - Press "+"
+     - Name: via-ISP1
+     - FIB: Check
+     - Press "OK"
+  2.2 Routing > Tables
+    For via-ISP1,
+     - Press "+"
+     - Name: via-ISP1
+     - FIB: Check
+     - Press "OK"
+
+# 3. Script PCC Load Balancing (2 WAN PPPoE)
+
+/ip firewall mangle
+add action=mark-routing chain=prerouting dst-address-list=!LAN new-routing-mark=via-ISP1 passthrough=yes per-connection-classifier=both-addresses-and-ports:2/0 src-address-list=LAN
+add action=mark-routing chain=prerouting dst-address-list=!LAN new-routing-mark=via-ISP2 passthrough=yes per-connection-classifier=both-addresses-and-ports:2/1 src-address-list=LAN
+
+OR
+
+/ip firewall mangle
+add action=mark-routing chain=prerouting dst-address-type=!local new-routing-mark=via-ISP1 passthrough=yes per-connection-classifier=both-addresses-and-ports:2/0 src-address-list=LAN
+add action=mark-routing chain=prerouting dst-address-type=!local new-routing-mark=via-ISP2 passthrough=yes per-connection-classifier=both-addresses-and-ports:2/1 src-address-list=LAN
+
+# 4. Create 2 routes to ISP1 and ISP2 with the mark routing that you have just created
