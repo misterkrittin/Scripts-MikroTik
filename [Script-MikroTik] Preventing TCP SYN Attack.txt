@@ -1,4 +1,4 @@
-/ip firewall filter add chain=input protocol=tcp connection-limit=32,1 action=add-src-to-address-list  address-list=blocked-addr address-list-timeout=1d 
+/ip firewall filter add chain=input protocol=tcp connection-limit=200,32 action=add-src-to-address-list  address-list=blocked-addr address-list-timeout=1d 
 /ip firewall filter add chain=input protocol=tcp src-address-list=blocked-addr connection-limit=3,32 action=tarpit 
 /ip firewall filter add chain=forward protocol=tcp tcp-flags=syn connection-state=new action=jump jump-target=SYN-Protect comment="SYN Flood protect" disabled=no
 /ip firewall filter add chain=SYN-Protect protocol=tcp tcp-flags=syn limit=400,5 connection-state=new action=accept comment="" disabled=no
