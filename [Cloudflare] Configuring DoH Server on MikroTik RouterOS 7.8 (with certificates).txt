@@ -1,0 +1,56 @@
+Encrypt your DNS requests with MikroTik (RouterOS 7.8 Stable)
+
+(1) Quick command line setup for Cloudflare:
+
+# Temporarily add a normal upstream DNS resolver
+1. /ip dns set servers=1.1.1.1,1.0.0.1
+
+# CA certificates extracted from DigiCert
+2. /tool fetch https://cacerts.digicert.com/DigiCertGlobalRootCA.crt.pem
+
+# Import CA to ca-store
+3. /certificate import file-name=DigiCertGlobalRootCA.crt.pem passphrase=""
+
+# Set the DoH resolver to cloudflare
+4. /ip dns set use-doh-server=https://1.1.1.1/dns-query verify-doh-cert=yes allow-remote-requests=yes
+
+# Remove the old upstream DNS resolvers
+5. /ip dns set servers=""
+
+Reminder: Uncheck "user-peer-dns" from dhcp-client (WAN) or pppoe-out1 (WAN)
+
+#########################################################################
+(2) Redirect DNS queries to router:
+
+/ip firewall nat add chain=dstnat protocol=tcp dst-port=53 action=redirect to-ports=53
+/ip firewall nat add chain=dstnat protocol=udp dst-port=53 action=redirect to-ports=53
+
+#########################################################################
+(3) Script for updating certificates
+
+System > Scripts
+
+Name: Update-Cert
+Policy: ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon
+Source:
+
+/tool fetch https://cacerts.digicert.com/DigiCertGlobalRootCA.crt.pem
+:delay 10s
+/certificate import file-name=DigiCertGlobalRootCA.crt.pem passphrase=""
+
+#########################################################################
+(4) Scheduler for run "Update-Cert" in every 1 week
+
+Name: Update-Cert
+policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon
+Start Time: 00:00:00
+Interval: 7d 00:00:00
+On Event: /system script run Update-Cert
+
+#########################################################################
+
+
+
+
+
+
