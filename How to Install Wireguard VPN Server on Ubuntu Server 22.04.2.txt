@@ -1,0 +1,79 @@
+[How to Install Wireguard VPN Server on Ubuntu Server 22.04.2]
+
+Server configuration
+
+(1) -- Installing WireGuard --
+
+sudo apt-get update && sudo apt-get upgrade -y
+sudo apt-get install wireguard
+
+(2) -- IP forwarding --
+
+sudo nano /etc/sysctl.conf (Delete # symbol on line "net.ipv4.ip_forward=1")
+sudo sysctl -p
+
+(3) -- Configuring firewall rules --
+sudo apt install ufw
+sudo ufw allow ssh
+sudo ufw allow 51820/udp
+sudo ufw enable
+sudo ufw status
+
+(4) -- Generating private and public keys --
+
+cd /etc/wireguard
+ls
+umask 077
+wg genkey | tee privatekey | wg pubkey > publickey
+sudo cat /etc/wireguard/publickey
+sudo cat /etc/wireguard/privatekey
+* Copy publickey and privatekry into Notepad *
+
+(5) -- Generating server config --
+sudo nano /etc/wireguard/wg0
+
+######################################################
+[Interface]
+PrivateKey = <contents-of-server-privatekey>
+Address = 10.0.0.1/24
+PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o ens33 -j MASQUERADE
+PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o ens33 -j MASQUERADE
+ListenPort = 51820
+
+[Peer]
+PublicKey = <contents-of-client-publickey>
+AllowedIPs = 10.0.0.2/32
+######################################################
+
+(6) -- Start Wireguard --
+wg-quick up wg0
+
+(7) -- Check Wireguard Config --
+wg show
+
+(8) -- Enable Automatic Start --
+systemctl enable wg-quick@wg0
+
+(9) -- Update Server --
+sudo apt-get update && sudo apt-get upgrade -y
+
+
+Client configuration
+
+For Windows
+
+(1) Download Wireguard Client: https://www.wireguard.com/install/
+(2) Click "Add empty tunnel..."
+
+######################################################
+[Interface]
+Address = 10.0.0.2/32
+PrivateKey = <contents-of-client-privatekey>
+DNS = 1.1.1.1
+
+[Peer]
+PublicKey = <contents-of-server-publickey>
+Endpoint = <server-public-ip>:51820
+AllowedIPs = 0.0.0.0/0, ::/0
+PersistentKeepalive = 10
+######################################################
