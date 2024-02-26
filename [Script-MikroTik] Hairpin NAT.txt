@@ -1,9 +1,0 @@
-#TechBlogClub by Krittin Srithong
-
-/ip firewall address-list
-add address=192.168.50.0/24 list=LAN
-
-/ip firewall nat
-add action=masquerade chain=srcnat comment="Internel Hairpin NAT" dst-address=!192.168.50.1 src-address-list=LAN
-add action=dst-nat chain=dstnat dst-address-type=local dst-port=80 protocol=tcp src-address-list=LAN to-addresses=192.168.50.100 to-ports=80
-add action=dst-nat chain=dstnat comment="External Port Forwarding" dst-port=80 in-interface=WAN1 protocol=tcp to-addresses=192.168.50.100 to-ports=80

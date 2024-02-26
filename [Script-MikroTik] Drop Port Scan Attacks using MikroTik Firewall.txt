@@ -1,5 +1,0 @@
-/ip firewall filter
-add action=add-src-to-address-list address-list="Port Scan" address-list-timeout=4w2d chain=forward comment="Preventing Port Scan" protocol=tcp psd=21,3s,3,1
-add action=add-src-to-address-list address-list="Port Scan" address-list-timeout=4w2d chain=input protocol=tcp psd=21,3s,3,1
-add action=drop chain=forward src-address-list="Port Scan"
-add action=drop chain=input src-address-list="Port Scan"
